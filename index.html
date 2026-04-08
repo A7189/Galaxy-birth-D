@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Happy Birthday</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+      #webgl-canvas { display: block; position: absolute; top: 0; left: 0; z-index: 1; }
+      #intro-container {
+        position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;
+        z-index: 10; visibility: hidden; overflow: hidden;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="intro-container"></div>
+    <canvas id="webgl-canvas"></canvas>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

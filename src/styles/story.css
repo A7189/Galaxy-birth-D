@@ -1,0 +1,108 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+.story-next-btn {
+    position: fixed;
+    bottom: 40px;
+    right: 50px;
+    padding: 12px 30px;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 30px;
+    font-size: 18px;
+    font-family: sans-serif;
+    letter-spacing: 2px;
+    cursor: pointer;
+    backdrop-filter: blur(5px);
+    z-index: 10000;
+    opacity: 0;
+    display: none;
+    transition: background 0.3s, transform 0.2s;
+}
+
+.story-next-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.05);
+}
+
+.story-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: #000000;
+    z-index: 20000;
+    opacity: 0;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.story-text {
+    color: #ffffff;
+    font-family: 'Poppins', sans-serif;
+    font-size: 2.5rem;
+    font-weight: 600;
+    opacity: 0;
+    text-align: center;
+    letter-spacing: 2px;
+}
+
+.story-interactive-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.9);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 15000;
+    opacity: 0;
+}
+
+.story-3d-image {
+    height: 70vh;
+    max-width: 40vw;
+    object-fit: cover;
+    border-radius: 12px;
+    box-shadow: 0 15px 50px rgba(0,0,0,0.6);
+    transition: transform 0.1s ease-out;
+    z-index: 2;
+}
+
+.story-side-text {
+    color: white;
+    font-family: 'Georgia', serif;
+    font-size: 1.2rem;
+    line-height: 1.6;
+    width: 25vw;
+    position: absolute;
+    opacity: 0;
+    z-index: 1;
+}
+
+.story-text-left {
+    left: 5%;
+    text-align: right;
+}
+
+.story-text-right {
+    right: 5%;
+    text-align: left;
+}
+
+.story-continue-hint {
+    position: absolute;
+    bottom: 30px;
+    color: rgba(255, 255, 255, 0.5);
+    font-family: sans-serif;
+    font-size: 0.9rem;
+    letter-spacing: 2px;
+    opacity: 0;
+    z-index: 3;
+    pointer-events: none;
+}

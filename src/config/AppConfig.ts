@@ -1,0 +1,30 @@
+export const GALAXY_CONFIG = {
+    COLOR_CORE: 0xffcc00,
+    COLOR_MID: 0xffffcc,
+    COLOR_EDGE: 0xff66b2,
+    SCALE: 80,
+    ROTATION_SPEED: 0.02,
+    PARTICLE_SIZE_MIN: 0.01,
+    PARTICLE_SIZE_MAX: 15.0
+};
+
+export const PHOTO_CONFIG = {
+    COUNT: 100,
+    ORBIT_SPEED_MIN: 0.0003,
+    ORBIT_SPEED_MAX: 0.0008,
+    SPACING_RADIUS_MIN: 20,
+    SPACING_RADIUS_MAX: 72,
+    Y_OFFSET_SPREAD: 3,
+    FLOAT_SPEED: 0.3
+};
+
+export const EFFECT_CONFIG = {
+    BLOOM_STRENGTH: 0.09,
+    BLOOM_RADIUS: 5.0,
+    BLOOM_THRESHOLD: 1.0
+};
+
+export const CAMERA_CONFIG = {
+    MIN_DISTANCE: 20,
+    MAX_DISTANCE: 180
+};
