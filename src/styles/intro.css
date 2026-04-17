@@ -456,3 +456,29 @@ body {
 .swal2-popup {
   border-radius: 16px !important;
 }
+
+.music-toggle {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 50000;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    border-radius: 50%;
+    width: 45px;
+    height: 45px;
+    cursor: pointer;
+    backdrop-filter: blur(5px);
+    display: none; 
+    font-size: 20px;
+    transition: transform 0.2s, background 0.3s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.music-toggle:hover {
+    transform: scale(1.1);
+    background: rgba(255, 255, 255, 0.2);
+}

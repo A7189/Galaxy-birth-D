@@ -35,13 +35,14 @@ export class StoryManager {
         
         this.textLeft = document.createElement('div');
         this.textLeft.className = 'story-side-text story-text-left';
-        this.textLeft.innerHTML = 'Ini adalah awal dari segalanya...<br><br>Ganti cerita bagian kiri ini dengan momen lucu atau manis pas kalian pertama kali dekat.';
-        
+        this.textLeft.innerHTML = '<b>Awal yang Nggak Disengaja...</b><br><br>Lucu ya kalau diingat-ingat lagi, semuanya cuma berawal dari candaan konyol. Niat awalnya cuma buat seru-seruan "pacaran bercanda", lewat masa PDKT kilat yang cuma 4 hari, eh malah keterusan.<br><br>Foto ini jadi saksi bisunya. Waktu pertama kali kita main bareng di Madiun, di rumah kamu. Siapa yang sangka, dari sekadar bercandaan iseng, kamu malah jadi bagian cerita yang paling panjang dan paling berarti buat aku.';
+
+
         this.textRight = document.createElement('div');
         this.textRight.className = 'story-side-text story-text-right';
-        this.textRight.innerHTML = 'Dan sejak hari itu...<br><br>Ganti cerita bagian kanan ini buat ngungkapin perasaan lu yang semakin dalam ke dia.';
-        
+        this.textRight.innerHTML = '<b>Dan sejak 18 Mei 2024...</b><br><br>Candaan itu berubah jadi hal yang paling pengen aku jaga serius. Di balik keras kepalaku, aku selalu kalah sama sifat manja dan tingkah lucu kamu. Dua hal itu yang selalu punya cara buat narik aku kembali dan bikin aku jatuh cinta lagi dan lagi.<br><br><i>You are the best "accident" that ever happened to me, Ca.</i> Terima kasih udah selalu ada. Selamat ulang tahun, sayang.';
         this.continueHint = document.createElement('div');
+
         this.continueHint.className = 'story-continue-hint';
         this.continueHint.innerText = 'Click anywhere to continue';
 
@@ -84,13 +85,27 @@ export class StoryManager {
         }, { once: true });
     }
 
-    public flyToSpecialPhoto(camera: THREE.PerspectiveCamera, controls: OrbitControls, targetMesh: THREE.Mesh, onComplete: () => void): void {
+   public flyToSpecialPhoto(camera: THREE.PerspectiveCamera, controls: OrbitControls, targetMesh: THREE.Mesh, onComplete: () => void): void {
         controls.enabled = false;
         const targetPos = new THREE.Vector3();
         targetMesh.getWorldPosition(targetPos);
         const dir = targetPos.clone().setY(0).normalize();
         const camPos = targetPos.clone().add(dir.multiplyScalar(4));
         camPos.y += 0.5;
+
+        const startQuaternion = targetMesh.quaternion.clone();
+        targetMesh.lookAt(camPos);
+        const endQuaternion = targetMesh.quaternion.clone();
+        targetMesh.quaternion.copy(startQuaternion);
+
+        gsap.to(targetMesh.quaternion, {
+            x: endQuaternion.x,
+            y: endQuaternion.y,
+            z: endQuaternion.z,
+            w: endQuaternion.w,
+            duration: 2.5,
+            ease: "power2.inOut"
+        });
 
         gsap.to(controls.target, { x: targetPos.x, y: targetPos.y, z: targetPos.z, duration: 2.5, ease: "power2.inOut" });
         gsap.to(camera.position, {

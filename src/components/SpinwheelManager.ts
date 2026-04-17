@@ -156,9 +156,13 @@ export class SpinWheelManager {
         const totalSlices = this.prizes.length;
         const sliceAngle = (Math.PI * 2) / totalSlices;
         
-        const normalizedRotation = (this.currentRotation % (Math.PI * 2));
-        let index = Math.floor((totalSlices - (normalizedRotation / sliceAngle)) % totalSlices);
-        if (index < 0) index += totalSlices;
+        // Jarum lu ada di posisi atas (270 derajat atau 1.5 PI)
+        let rawAngle = (Math.PI * 1.5) - this.currentRotation;
+        
+        // Normalisasi angle biar nilainya selalu positif 0 sampai 2PI
+        rawAngle = ((rawAngle % (Math.PI * 2)) + (Math.PI * 2)) % (Math.PI * 2);
+        
+        let index = Math.floor(rawAngle / sliceAngle);
         
         const result = this.prizes[index];
 
