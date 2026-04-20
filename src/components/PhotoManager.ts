@@ -6,7 +6,7 @@ export const orbitGroup = new THREE.Group();
 orbitGroup.position.y = 4;
 
 export const photoMeshes: THREE.Mesh[] = [];
-export const orbitData: { radius: number, targetRadius: number, angle: number, speed: number, yOffset: number }[] = [];
+export const orbitData: { radius: number, targetRadius: number, angle: number, speed: number, yOffset: number, floatPhase: number }[] = [];
 
 export function loadPhotos(scene: THREE.Scene): void {
     scene.add(orbitGroup);
@@ -16,7 +16,7 @@ export function loadPhotos(scene: THREE.Scene): void {
         const photoUrl = `/ica_${i}.jpg`;
 
         textureLoader.load(photoUrl, (texture) => {
-            const geometry = new THREE.PlaneGeometry(3, 4.2);
+            const geometry = new THREE.PlaneGeometry(PHOTO_CONFIG.PHOTO_WIDTH, PHOTO_CONFIG.PHOTO_HEIGHT);
             const material = new THREE.MeshBasicMaterial({
                 map: texture,
                 side: THREE.DoubleSide,
@@ -29,20 +29,21 @@ export function loadPhotos(scene: THREE.Scene): void {
             const targetRadius = PHOTO_CONFIG.SPACING_RADIUS_MIN + Math.random() * (PHOTO_CONFIG.SPACING_RADIUS_MAX - PHOTO_CONFIG.SPACING_RADIUS_MIN);
             const angle = Math.random() * Math.PI * 2;
             const speed = Math.random() * (PHOTO_CONFIG.ORBIT_SPEED_MAX - PHOTO_CONFIG.ORBIT_SPEED_MIN) + PHOTO_CONFIG.ORBIT_SPEED_MIN;
-            const yOffset = 0; 
+            const yOffset = (Math.random() - 0.5) * PHOTO_CONFIG.Y_OFFSET_SPREAD;
+            const floatPhase = Math.random() * Math.PI * 2;
 
             mesh.position.set(0, yOffset, 0);
             mesh.scale.set(0.01, 0.01, 0.01);
 
             orbitGroup.add(mesh);
             photoMeshes.push(mesh);
-            orbitData.push({ radius: 0, targetRadius, angle, speed, yOffset });
+            orbitData.push({ radius: 0, targetRadius, angle, speed, yOffset, floatPhase });
         });
     }
 
     const specialUrl = `/ica_500.jpg`;
     textureLoader.load(specialUrl, (texture) => {
-        const geometry = new THREE.PlaneGeometry(3, 4.2);
+        const geometry = new THREE.PlaneGeometry(PHOTO_CONFIG.PHOTO_WIDTH, PHOTO_CONFIG.PHOTO_HEIGHT);
         const material = new THREE.MeshBasicMaterial({
             map: texture,
             side: THREE.DoubleSide,
@@ -55,16 +56,18 @@ export function loadPhotos(scene: THREE.Scene): void {
         const targetRadius = PHOTO_CONFIG.SPACING_RADIUS_MIN + Math.random() * (PHOTO_CONFIG.SPACING_RADIUS_MAX - PHOTO_CONFIG.SPACING_RADIUS_MIN);
         const angle = Math.random() * Math.PI * 2;
         const speed = Math.random() * (PHOTO_CONFIG.ORBIT_SPEED_MAX - PHOTO_CONFIG.ORBIT_SPEED_MIN) + PHOTO_CONFIG.ORBIT_SPEED_MIN;
-        const yOffset = 0; 
+        const yOffset = (Math.random() - 0.5) * PHOTO_CONFIG.Y_OFFSET_SPREAD;
+        const floatPhase = Math.random() * Math.PI * 2;
 
         mesh.position.set(0, yOffset, 0);
         mesh.scale.set(0.01, 0.01, 0.01);
 
         orbitGroup.add(mesh);
         photoMeshes.push(mesh);
-        orbitData.push({ radius: 0, targetRadius, angle, speed, yOffset });
+        orbitData.push({ radius: 0, targetRadius, angle, speed, yOffset, floatPhase });
     });
 }
+
 export function animatePhotonShower(onComplete?: () => void): void {
     let completed = 0;
     const total = photoMeshes.length;
@@ -115,7 +118,10 @@ export function updatePhotos(elapsedTime: number, cameraPosition: THREE.Vector3)
             data.angle += data.speed;
             mesh.position.x = Math.cos(data.angle) * data.radius;
             mesh.position.z = Math.sin(data.angle) * data.radius;
-            mesh.position.y = data.yOffset;
+            
+            const floatingY = Math.sin(elapsedTime * PHOTO_CONFIG.FLOAT_SPEED + data.floatPhase) * PHOTO_CONFIG.FLOAT_AMPLITUDE;
+            mesh.position.y = data.yOffset + floatingY;
+            
             mesh.lookAt(cameraPosition);
         }
     });

@@ -1,7 +1,8 @@
 import * as THREE from 'three';
 import gsap from 'gsap';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-import { spinWheelManager } from './SpinwheelManager';
+import { photoMeshes } from './PhotoManager';
+import { fullscreenViewer } from '../view/FullscreenViewer';
 
 export class StoryManager {
     private nextBtn: HTMLButtonElement;
@@ -18,6 +19,9 @@ export class StoryManager {
         this.nextBtn = document.createElement('button');
         this.nextBtn.innerText = 'Next ➔';
         this.nextBtn.className = 'story-next-btn';
+        // Sembunyiin dari awal biar ga bocor
+        this.nextBtn.style.display = 'none';
+        this.nextBtn.style.opacity = '0';
         document.body.appendChild(this.nextBtn);
 
         this.overlay = document.createElement('div');
@@ -35,12 +39,11 @@ export class StoryManager {
         
         this.textLeft = document.createElement('div');
         this.textLeft.className = 'story-side-text story-text-left';
-        this.textLeft.innerHTML = '<b>Awal yang Nggak Disengaja...</b><br><br>Lucu ya kalau diingat-ingat lagi, semuanya cuma berawal dari candaan konyol. Niat awalnya cuma buat seru-seruan "pacaran bercanda", lewat masa PDKT kilat yang cuma 4 hari, eh malah keterusan.<br><br>Foto ini jadi saksi bisunya. Waktu pertama kali kita main bareng di Madiun, di rumah kamu. Siapa yang sangka, dari sekadar bercandaan iseng, kamu malah jadi bagian cerita yang paling panjang dan paling berarti buat aku.';
-
+        this.textLeft.innerHTML = '<b>Awal cerita kita...</b><br><br>Lucu ya kalau diinget inget lagi, semuanya cuma berawal dari aku nawarin kamu soal UI/UX. Niat awal aku cuma mau ngajarin kamu basic sederhana eh kita malah deket, Kita PDKT cuma 4 hari, eh malah keterusan sampe sekarang yang bulan depan sudah 2 tahun...<br><br>Foto ini jadi saksi bisu kita. Ini waktu pertama kali kita main bareng di madiun di rumah kamu. Siapa yang nyangka, dari sekadar nawarin ngajarin kamu sesuatu dengan iseng, kamu malah jadi bagian cerita yang paling panjang dan paling berarti buat aku.';
 
         this.textRight = document.createElement('div');
         this.textRight.className = 'story-side-text story-text-right';
-        this.textRight.innerHTML = '<b>Dan sejak 18 Mei 2024...</b><br><br>Candaan itu berubah jadi hal yang paling pengen aku jaga serius. Di balik keras kepalaku, aku selalu kalah sama sifat manja dan tingkah lucu kamu. Dua hal itu yang selalu punya cara buat narik aku kembali dan bikin aku jatuh cinta lagi dan lagi.<br><br><i>You are the best "accident" that ever happened to me, Ca.</i> Terima kasih udah selalu ada. Selamat ulang tahun, sayang.';
+        this.textRight.innerHTML = '<b>sejak 18 Mei 2024...</b><br><br>Hubungan kita berubah jadi hal yang paling pengen aku jaga dengan serius. Di balik sifat ku yang keras kepala, aku selalu kalah sama sifat manja dan tingkah kamu. Dua hal itu yang selalu narik aku kembali dan bikin aku jatuh cinta lagi lagi dan lagi.<br><br><i>You are the best "accident" that ever happened to me, Ca.</i> Terima kasih udah selalu ada. Selamat ulang tahun, sayang.';
         this.continueHint = document.createElement('div');
 
         this.continueHint.className = 'story-continue-hint';
@@ -85,7 +88,23 @@ export class StoryManager {
         }, { once: true });
     }
 
-   public flyToSpecialPhoto(camera: THREE.PerspectiveCamera, controls: OrbitControls, targetMesh: THREE.Mesh, onComplete: () => void): void {
+    // --- FUNGSI BARU BUAT HIDE/SHOW DARI FULLSCREEN VIEWER ---
+    public hideNextButtonTemporarily(): void {
+        if (this.nextBtn.style.display !== 'none') {
+            gsap.to(this.nextBtn, { opacity: 0, duration: 0.3, onComplete: () => { this.nextBtn.style.display = 'none'; } });
+        }
+    }
+
+    public restoreNextButton(): void {
+        // Cuma balikin tombol kalau belom masuk story mode akhir
+        if (!this.isStoryMode && this.nextBtn.style.opacity === '0') {
+            this.nextBtn.style.display = 'block';
+            gsap.to(this.nextBtn, { opacity: 1, duration: 0.3 });
+        }
+    }
+    // ---------------------------------------------------------
+
+    public flyToSpecialPhoto(camera: THREE.PerspectiveCamera, controls: OrbitControls, targetMesh: THREE.Mesh, onComplete: () => void): void {
         controls.enabled = false;
         const targetPos = new THREE.Vector3();
         targetMesh.getWorldPosition(targetPos);
@@ -116,7 +135,7 @@ export class StoryManager {
         });
     }
 
-  public startStoryTransition(imageUrl: string, onTransitionComplete: () => void): void {
+    public startStoryTransition(imageUrl: string, onTransitionComplete: () => void): void {
         this.storyImage.src = imageUrl;
         this.interactiveContainer.style.display = 'flex';
 

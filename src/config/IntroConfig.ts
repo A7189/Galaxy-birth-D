@@ -1,6 +1,6 @@
 export const INTRO_CONFIG = {
     name: "ica",
-    photo: "/ica_1.jpg",
+    photo: "/ica_221.jpg",
     colors: {
         primary: "#ff66b2",
         accent: "#60a5fa",

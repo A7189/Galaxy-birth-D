@@ -1,3 +1,9 @@
+import * as THREE from 'three';
+import gsap from 'gsap';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+// --- IMPORT STORY MANAGER DI SINI ---
+import { storyManager } from '../components/StoryManager';
+
 export class FullscreenViewer {
     private overlay: HTMLElement;
     private imageElement: HTMLImageElement;
@@ -30,6 +36,9 @@ export class FullscreenViewer {
         this.imageElement.src = imageUrl;
         this.overlay.style.display = 'flex';
         
+        // --- HILANGIN TOMBOL NEXT PAS FOTO DIBUKA ---
+        storyManager.hideNextButtonTemporarily();
+        
         setTimeout(() => {
             this.overlay.style.opacity = '1';
         }, 10);
@@ -40,6 +49,9 @@ export class FullscreenViewer {
         setTimeout(() => {
             this.overlay.style.display = 'none';
             this.imageElement.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg)';
+            
+            // --- MUNCULIN LAGI TOMBOL NEXT PAS FOTO DITUTUP ---
+            storyManager.restoreNextButton();
         }, 300);
     }
 

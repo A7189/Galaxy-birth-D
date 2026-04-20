@@ -1,0 +1,17 @@
+.galaxy-core-glow {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    /* Ini gradasi warna dari Config lu: Kuning Terang -> Pink -> Transparan */
+    background: radial-gradient(
+        circle at center, 
+        rgba(255, 204, 0, 0.4) 0%,   /* Inti kuning terang (COLOR_CORE) */
+        rgba(255, 102, 178, 0.1) 30%, /* Pendaran pink (COLOR_EDGE) */
+        transparent 65%               /* Ngilang di ujung layar */
+    );
+    pointer-events: none; /* PENTING: Biar layar tetep bisa digeser pake mouse/jari */
+    z-index: 9999; /* Numpuk di atas canvas, tapi di bawah pop-up/tombol UI */
+    mix-blend-mode: screen; /* Bikin warnanya nyala/glowing kayak cahaya beneran */
+}

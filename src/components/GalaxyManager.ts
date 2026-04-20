@@ -1,15 +1,24 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { 
+    planetGlowVertexShader, 
+    planetGlowFragmentShader, 
+    planetNightTextureVertexShader, 
+    planetNightTextureFragmentShader 
+} from '../shaders/PlanetShaders';
 import { galaxyPointVertexShader, galaxyPointFragmentShader } from '../shaders/GalaxyPointShaders';
 import { GALAXY_CONFIG } from '../config/AppConfig';
 
 export const galaxyGroup = new THREE.Group();
+export let earthSphere: THREE.Mesh;
+let atmosphereMesh: THREE.Mesh;
 
 export const pointMaterial = new THREE.ShaderMaterial({
     uniforms: {
         uTime: { value: 0 },
         uSizeMin: { value: GALAXY_CONFIG.PARTICLE_SIZE_MIN },
         uSizeMax: { value: GALAXY_CONFIG.PARTICLE_SIZE_MAX },
+        uMultiplier: { value: GALAXY_CONFIG.PARTICLE_BASE_MULTIPLIER },
         uColorCore: { value: new THREE.Color(GALAXY_CONFIG.COLOR_CORE) },
         uColorMid: { value: new THREE.Color(GALAXY_CONFIG.COLOR_MID) },
         uColorEdge: { value: new THREE.Color(GALAXY_CONFIG.COLOR_EDGE) }
@@ -42,7 +51,6 @@ export function addSpaceEnvironment(scene: THREE.Scene) {
     const smokeTexture = textureLoader.load('/smoke.png'); 
     const starTexture = createSoftParticleTexture();
 
-    // 1. DEBU LUAR ANGKASA
     const dustCount = 3000;
     const dustGeometry = new THREE.BufferGeometry();
     const dustPositions = new Float32Array(dustCount * 3);
@@ -65,7 +73,6 @@ export function addSpaceEnvironment(scene: THREE.Scene) {
     dustParticles = new THREE.Points(dustGeometry, dustMaterial);
     scene.add(dustParticles);
 
-    // 2. AWAN NEBULA (Pakai smoke.png dan warna Config Milky Way)
     const nebulaCount = 150;
     const nebulaGeometry = new THREE.BufferGeometry();
     const nebulaPositions = new Float32Array(nebulaCount * 3);
@@ -99,7 +106,7 @@ export function addSpaceEnvironment(scene: THREE.Scene) {
         vertexColors: true,
         map: smokeTexture, 
         transparent: true,
-        opacity: 0.015, // DITIPISIN JADI SANGAT HALUS
+        opacity: 0.015, 
         depthWrite: false,
         blending: THREE.AdditiveBlending
     });
@@ -121,6 +128,46 @@ export function animateSpaceEnvironment(elapsedTime: number) {
 
 export function loadGalaxy(scene: THREE.Scene): void {
     scene.add(galaxyGroup);
+    
+    const textureLoader = new THREE.TextureLoader();
+
+    const dayTexture = textureLoader.load('/moon.jpg');
+    const nightTexture = textureLoader.load('/moon.jpg'); 
+
+    const earthMaterial = new THREE.ShaderMaterial({
+        uniforms: {
+            dayTexture: { value: dayTexture },
+            nightTexture: { value: nightTexture },
+            sunDirection: { value: new THREE.Vector3(5, 2, 3).normalize() },
+            uBrightness: { value: 0.6 }
+        },
+        vertexShader: planetNightTextureVertexShader,
+        fragmentShader: planetNightTextureFragmentShader
+    });
+
+    const earthGeometry = new THREE.SphereGeometry(15, 64, 64);
+    earthSphere = new THREE.Mesh(earthGeometry, earthMaterial);
+    earthSphere.position.set(0, 0, 0);
+    galaxyGroup.add(earthSphere);
+
+    const atmosphereMaterial = new THREE.ShaderMaterial({
+        uniforms: {
+            fresnelBias: { value: 0.05 }, 
+            fresnelScale: { value: 3.0 }, 
+            fresnelPower: { value: 25.0 }, 
+            color1: { value: new THREE.Color(0x6084b4) }, 
+            color2: { value: new THREE.Color(0x000000) }  
+        },
+        vertexShader: planetGlowVertexShader,
+        fragmentShader: planetGlowFragmentShader,
+        transparent: true,
+        blending: THREE.AdditiveBlending,
+        side: THREE.BackSide 
+    });
+
+    atmosphereMesh = new THREE.Mesh(new THREE.SphereGeometry(15.1, 64, 64), atmosphereMaterial);
+    galaxyGroup.add(atmosphereMesh);
+
     const gltfLoader = new GLTFLoader();
 
     gltfLoader.load(
@@ -160,6 +207,10 @@ export function loadGalaxy(scene: THREE.Scene): void {
 export function updateGalaxy(elapsedTime: number): void {
     if (galaxyGroup) {
         galaxyGroup.rotation.y = elapsedTime * GALAXY_CONFIG.ROTATION_SPEED; 
+    }
+    if (earthSphere) {
+        earthSphere.rotation.y = elapsedTime * 0.1;
+        if (atmosphereMesh) atmosphereMesh.rotation.y = earthSphere.rotation.y;
     }
     if (pointMaterial) {
         pointMaterial.uniforms.uTime.value = elapsedTime;
