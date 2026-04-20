@@ -12,18 +12,23 @@ export function loadPhotos(scene: THREE.Scene): void {
     scene.add(orbitGroup);
     const textureLoader = new THREE.TextureLoader();
     
+    const sharedGeometry = new THREE.PlaneGeometry(PHOTO_CONFIG.PHOTO_WIDTH, PHOTO_CONFIG.PHOTO_HEIGHT);
+    
     for (let i = 1; i <= PHOTO_CONFIG.COUNT; i++) {
         const photoUrl = `/ica_${i}.jpg`;
 
         textureLoader.load(photoUrl, (texture) => {
-            const geometry = new THREE.PlaneGeometry(PHOTO_CONFIG.PHOTO_WIDTH, PHOTO_CONFIG.PHOTO_HEIGHT);
+            texture.generateMipmaps = false;
+            texture.minFilter = THREE.LinearFilter;
+
             const material = new THREE.MeshBasicMaterial({
                 map: texture,
                 side: THREE.DoubleSide,
                 transparent: true,
                 opacity: 0
             });
-            const mesh = new THREE.Mesh(geometry, material);
+            
+            const mesh = new THREE.Mesh(sharedGeometry, material);
             mesh.userData = { id: i };
 
             const targetRadius = PHOTO_CONFIG.SPACING_RADIUS_MIN + Math.random() * (PHOTO_CONFIG.SPACING_RADIUS_MAX - PHOTO_CONFIG.SPACING_RADIUS_MIN);
@@ -43,14 +48,17 @@ export function loadPhotos(scene: THREE.Scene): void {
 
     const specialUrl = `/ica_500.jpg`;
     textureLoader.load(specialUrl, (texture) => {
-        const geometry = new THREE.PlaneGeometry(PHOTO_CONFIG.PHOTO_WIDTH, PHOTO_CONFIG.PHOTO_HEIGHT);
+        texture.generateMipmaps = false;
+        texture.minFilter = THREE.LinearFilter;
+
         const material = new THREE.MeshBasicMaterial({
             map: texture,
             side: THREE.DoubleSide,
             transparent: true,
             opacity: 0
         });
-        const mesh = new THREE.Mesh(geometry, material);
+        
+        const mesh = new THREE.Mesh(sharedGeometry, material);
         mesh.userData = { id: 500, isSpecial: true };
 
         const targetRadius = PHOTO_CONFIG.SPACING_RADIUS_MIN + Math.random() * (PHOTO_CONFIG.SPACING_RADIUS_MAX - PHOTO_CONFIG.SPACING_RADIUS_MIN);
@@ -111,7 +119,9 @@ export function animatePhotonShower(onComplete?: () => void): void {
     });
 }
 
-export function updatePhotos(elapsedTime: number, cameraPosition: THREE.Vector3): void {
+export function updatePhotos(elapsedTime: number, camera: THREE.PerspectiveCamera): void {
+    const camQuaternion = camera.quaternion;
+
     photoMeshes.forEach((mesh, index) => {
         const data = orbitData[index];
         if (data) {
@@ -122,7 +132,8 @@ export function updatePhotos(elapsedTime: number, cameraPosition: THREE.Vector3)
             const floatingY = Math.sin(elapsedTime * PHOTO_CONFIG.FLOAT_SPEED + data.floatPhase) * PHOTO_CONFIG.FLOAT_AMPLITUDE;
             mesh.position.y = data.yOffset + floatingY;
             
-            mesh.lookAt(cameraPosition);
+            // PAKSA SEMUA FOTO COPY ROTASI KAMERA (JAUH LEBIH ENTENG)
+            mesh.quaternion.copy(camQuaternion);
         }
     });
 }

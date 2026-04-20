@@ -25,7 +25,9 @@ camera.position.set(0, 40, 100);
 
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+// PINDAH KE SINI: Biar MacBook M3 adem dari awal intro
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5)); 
 
 scene.background = new THREE.Color('#000000');
 
@@ -36,7 +38,10 @@ controls.minDistance = CAMERA_CONFIG.MIN_DISTANCE;
 controls.maxDistance = CAMERA_CONFIG.MAX_DISTANCE;
 
 const ambientLight = new THREE.AmbientLight(0xffffcc, 1.5);
-scene.add(ambientLight);
+scene.add(ambientLight);    
+
+(window as any).isUniverseLoaded = false;
+(window as any).universeProgress = 0;  
 
 loadGalaxy(scene);
 loadPhotos(scene);
@@ -59,7 +64,8 @@ const tick = () => {
     if (!storyManager.isStoryMode) {
         const elapsedTime = clock.getElapsedTime();
         updateGalaxy(elapsedTime);
-        updatePhotos(elapsedTime, camera.position);
+        // Pastikan PhotoManager nerima camera (bukan camera.position) buat quaternion copy
+        updatePhotos(elapsedTime, camera);
     }
 
     if (!storyManager.isStoryMode) {
@@ -98,7 +104,6 @@ if (DEV_MODE) {
         background: '#0f172a',
         color: '#f1f5f9'
     }).then((result) => {
-        
         if (result.isConfirmed) {
             audioManager.playBGM();
         } else {
@@ -131,7 +136,6 @@ if (DEV_MODE) {
                                 });
                             } else {
                                 const backupMesh = photoMeshes[0]; 
-                                
                                 if (backupMesh) {
                                     const targetUrl = `/ica_${backupMesh.userData.id}.jpg`;
                                     storyManager.flyToSpecialPhoto(camera, controls, backupMesh, () => {

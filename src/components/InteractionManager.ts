@@ -3,6 +3,7 @@ import gsap from 'gsap';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { photoMeshes } from './PhotoManager';
 import { fullscreenViewer } from '../view/FullscreenViewer';
+import { storyManager } from './StoryManager'; // IMPORT INI
 
 const raycaster = new THREE.Raycaster();
 const pointer = new THREE.Vector2(-100, -100);
@@ -24,6 +25,10 @@ export function setupInteraction(camera: THREE.PerspectiveCamera, controls: Orbi
         
         const id = hoveredMesh.userData.id;
         const imageUrl = `/ica_${id}.jpg`;
+
+        // --- TAMBAHIN INI BIAR TOMBOL NEXT ILANG PAS FOTO DIZOOM ---
+        storyManager.hideNextButtonTemporarily();
+        
         fullscreenViewer.show(imageUrl);
     });
 }

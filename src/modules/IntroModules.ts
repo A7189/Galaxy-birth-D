@@ -82,7 +82,7 @@ export const IntroComponents: Record<string, any> = {
               .to(el.querySelector(".text-box"), { duration: 0.5, scale: 0.2, opacity: 0, y: -150 }, "+=1");
         }
     },
-ideas: {
+    ideas: {
         render(container: HTMLElement, section: any, config: any) {
             const div = document.createElement("div");
             div.className = "section section-ideas";
@@ -286,6 +286,7 @@ ideas: {
         render(container: HTMLElement, section: any) {
             const div = document.createElement("div");
             div.className = "section section-closing";
+            
             div.innerHTML = `
                 <p class="closing-text" style="margin-bottom: 40px;">${section.text}</p>
                 <button id="start-universe-btn" style="
@@ -296,12 +297,15 @@ ideas: {
                     font-family: inherit;
                     font-weight: 600;
                     color: #fff;
-                    background: transparent;
+                    background-color: transparent;
+                    background-image: linear-gradient(var(--primary), var(--primary));
+                    background-repeat: no-repeat;
+                    background-size: 0% 100%;
                     border: 2px solid var(--primary);
                     border-radius: 30px;
                     cursor: pointer;
-                    transition: all 0.3s ease;
-                ">Let's Go!</button>
+                    transition: opacity 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+                ">Menyiapkan... 0%</button>
             `;
             container.appendChild(div);
             return div;
@@ -314,19 +318,34 @@ ideas: {
                   ease: "power2.out",
                   onComplete: () => {
                       const btn = el.querySelector("#start-universe-btn") as HTMLElement;
-                      if (btn) {
-                          btn.style.pointerEvents = "auto";
-                          btn.onmouseenter = () => { 
-                              btn.style.background = "var(--primary)"; 
-                              btn.style.transform = "scale(1.05)"; 
+                      if (!btn) return;
+
+                      const progressObj = { val: 0 };
+                      
+                      gsap.to(progressObj, {
+                          val: 100,
+                          duration: 30,
+                          ease: "none",
+                          onUpdate: () => {
+                              const currentPercent = Math.floor(progressObj.val);
+                              btn.innerText = `Menyiapkan... ${currentPercent}%`;
+                              btn.style.backgroundSize = `${currentPercent}% 100%`;
+                          },
+                          onComplete: () => {
+                              btn.innerText = "Let's Go!";
+                              btn.style.pointerEvents = "auto";
                               btn.style.boxShadow = "0 0 15px var(--primary)";
-                          };
-                          btn.onmouseleave = () => { 
-                              btn.style.background = "transparent"; 
-                              btn.style.transform = "scale(1)"; 
-                              btn.style.boxShadow = "none";
-                          };
-                      }
+
+                              btn.onmouseenter = () => { 
+                                  btn.style.transform = "scale(1.05)"; 
+                                  btn.style.boxShadow = "0 0 20px var(--primary)";
+                              };
+                              btn.onmouseleave = () => { 
+                                  btn.style.transform = "scale(1)"; 
+                                  btn.style.boxShadow = "0 0 15px var(--primary)";
+                              };
+                          }
+                      });
                   }
               }, "+=1");
         }
