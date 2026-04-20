@@ -14,7 +14,7 @@ export function enableInteraction(): void {
     isInteractionEnabled = true;
 }
 
-export function setupInteraction(camera: THREE.PerspectiveCamera, controls: OrbitControls): void {
+export function setupInteraction(_camera: THREE.PerspectiveCamera, _controls: OrbitControls): void {
     window.addEventListener('pointermove', (event) => {
         pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
         pointer.y = -(event.clientY / window.innerHeight) * 2 + 1;

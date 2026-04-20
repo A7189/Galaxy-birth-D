@@ -1,9 +1,6 @@
 import * as THREE from 'three';
 import gsap from 'gsap';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-import { photoMeshes } from './PhotoManager';
-import { fullscreenViewer } from '../view/FullscreenViewer';
-
 export class StoryManager {
     private nextBtn: HTMLButtonElement;
     private overlay: HTMLDivElement;
